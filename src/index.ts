@@ -144,18 +144,22 @@ function normalizedCombine(ingredientArray: IIngredient[]) {
       const collapsedQty = normalizedIngredient.add(existing).to(chosenUnit);
       combinedIngredients[key] = {
         ...combinedIngredients[key],
-        quantity: collapsedQty.toFloat() + '',
+        quantity: collapsedQty.scalar + '',
         unit: collapsedQty.units(),
+        minQty: null,
+        maxQty: null
       };
     } else {
       combinedIngredients[key] = {
         ...ingredient,
         quantity,
         unit,
+        minQty: null,
+        maxQty: null
       };
     }
   }
-  return combinedIngredients;
+  return Object.values(combinedIngredients);
 }
 
 function prettyPrintingPress(ingredient: IIngredient): string {
