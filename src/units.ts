@@ -1,5 +1,5 @@
 export const units = {
-  cup: ['c', 'c.', 'C', 'Cups'],
+  cup: ['c', 'c.', 'C', 'Cups', 'cu'],
   gallon: ['gal'],
   ounce: ['oz', 'oz.'],
   pint: ['pt', 'pts', 'pt.'],

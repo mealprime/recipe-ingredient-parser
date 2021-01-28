@@ -69,6 +69,7 @@ describe('recipe parser', () => {
       expect(parse('1/3 cup confectioners’ sugar')).to.deep.equal({
         quantity: '0.333',
         unit: 'cup',
+        extraInfo: '',
         ingredient: 'confectioners’ sugar',
         minQty: '0.333',
         maxQty: '0.333',
@@ -138,7 +139,8 @@ describe('recipe parser', () => {
       expect(parse('1 (14.5 oz) can tomatoes')).to.deep.equal({
         unit: 'can',
         quantity: '1',
-        ingredient: 'tomatoes (14.5 oz)',
+        ingredient: 'tomatoes',
+        extraInfo: '(14.5 oz)',
         minQty: '1',
         maxQty: '1',
       });
@@ -147,7 +149,8 @@ describe('recipe parser', () => {
       expect(parse('25 lb beef stew chunks (or buy a roast and chop into small cubes)')).to.deep.equal({
         unit: 'pound',
         quantity: '25',
-        ingredient: 'beef stew chunks (or buy a roast and chop into small cubes)',
+        ingredient: 'beef stew chunks',
+        extraInfo: '(or buy a roast and chop into small cubes)',
         minQty: '25',
         maxQty: '25',
       });
@@ -157,6 +160,7 @@ describe('recipe parser', () => {
         unit: null,
         quantity: '1-2',
         ingredient: 'chicken breasts',
+        extraInfo: '',
         minQty: '1',
         maxQty: '2',
       });
@@ -166,6 +170,7 @@ describe('recipe parser', () => {
         unit: null,
         quantity: '1-2',
         ingredient: 'chicken breasts',
+        extraInfo: '',
         minQty: '1',
         maxQty: '2',
       });
@@ -175,6 +180,7 @@ describe('recipe parser', () => {
         unit: null,
         quantity: '1-2',
         ingredient: 'chicken breasts',
+        extraInfo: '',
         minQty: '1',
         maxQty: '2',
       });
@@ -183,7 +189,8 @@ describe('recipe parser', () => {
       expect(parse('1 (16 oz) box pasta')).to.deep.equal({
         unit: 'box',
         quantity: '1',
-        ingredient: 'pasta (16 oz)',
+        extraInfo: '(16 oz)',
+        ingredient: 'pasta',
         minQty: '1',
         maxQty: '1',
       });
@@ -192,6 +199,7 @@ describe('recipe parser', () => {
       expect(parse('1 slice cheese')).to.deep.equal({
         unit: 'slice',
         quantity: '1',
+        extraInfo: '',
         ingredient: 'cheese',
         minQty: '1',
         maxQty: '1',
@@ -203,6 +211,7 @@ describe('recipe parser', () => {
     expect(parse('1 tortilla')).to.deep.equal({
       unit: null,
       ingredient: 'tortilla',
+      extraInfo: '',
       quantity: '1',
       minQty: '1',
       maxQty: '1',
@@ -213,6 +222,7 @@ describe('recipe parser', () => {
     expect(parse('powdered sugar')).to.deep.equal({
       unit: null,
       ingredient: 'powdered sugar',
+      extraInfo: '',
       quantity: null,
       minQty: null,
       maxQty: null,

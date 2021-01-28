@@ -1,12 +1,11 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "node_modules": true,
-    "lib": true
-  }
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "files.exclude": {},
+
+  // Only run once Mocha Test Explorer is installed
+  "mochaExplorer.require": "ts-node/register",
+  "mochaExplorer.files": "test/**/*.ts"
 }
