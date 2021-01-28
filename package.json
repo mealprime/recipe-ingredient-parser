@@ -1,12 +1,12 @@
 {
   "name": "@mealprime/recipe-ingredient-parser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Natural language parser for recipes and ingredient lists, incl. combining ingredients",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "shx rm -rf lib && tsc",
-    "publish:package": "npm run build && npm login && npm publish --access public",
+    "publish:package": "npm run build && npm publish --access public",
     "build:test": "shx rm -rf testDist && tsc -p test/tsconfig.json",
     "lint": "tslint \"{./**/*.ts,./**/*.tsx}\" --exclude \"{./node_modules/**,./**/*.d.ts}\"",
     "prepublish": "npm run build",
