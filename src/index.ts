@@ -109,57 +109,75 @@ function combine(ingredientArray: IIngredient[]) {
     .sort(compareIngredients);
 }
 
-/*
- * Ingredients is grouped by name instead of name and unit
- */
-function normalizedCombine(ingredientArray: IIngredient[]) {
-  const combinedIngredients: { [ingredient: string]: IIngredient } = {};
-  for (const ingredient of ingredientArray) {
-    if (!ingredient.ingredient || !ingredient.quantity) {
-      continue;
-    }
-    // evaluate number, fration to decimal since js-quantities only work with decimal
-    const quantity = math.evaluate(ingredient.quantity.trim().replace(' ', '-')) + '';
-    const unit = ingredient.unit?.toLocaleLowerCase() + '';
-    const normalizedIngredient = Qty(parseFloat(quantity), unit);
-    const unitType = normalizedIngredient.kind();
-    if (!['volume', 'mass'].includes(unitType)) {
-      throw new Error('Unexpected ingredient unit type');
-    }
-
-    const key = ingredient.ingredient;
-    if (key in combinedIngredients) {
-      const existing = Qty(
-        parseFloat(combinedIngredients[key].quantity + ''),
-        combinedIngredients[key].unit + ''
-      );
-      // We pick the larger unit. e.g teaspoon vs cup --> cup
-      let chosenUnit;
-      if (Qty(1, existing.units()).gt(normalizedIngredient)) {
-        chosenUnit = existing.units();
-      } else {
-        chosenUnit = normalizedIngredient.units();
-      }
-
-      const collapsedQty = normalizedIngredient.add(existing).to(chosenUnit);
-      combinedIngredients[key] = {
-        ...combinedIngredients[key],
-        quantity: collapsedQty.scalar + '',
-        unit: collapsedQty.units(),
-        minQty: null,
-        maxQty: null
-      };
-    } else {
-      combinedIngredients[key] = {
-        ...ingredient,
-        quantity,
-        unit,
-        minQty: null,
-        maxQty: null
-      };
-    }
+function toNumber(str: string | null): number {
+  str = str ?? '0';
+  // Take care of this case '1-2' 1 to 2 quantity. just use the first qty for now
+  if (str.includes('-')) {
+    const parts = str.split('-');
+    str = parseFloat(parts?.[0] ?? '0') + '';
   }
-  return Object.values(combinedIngredients);
+  return parseFloat(math.evaluate(str?.trim().replace(' ', '-') + '') + '');
+}
+
+function normalizeUnit(unit: string | null): string {
+  return unit?.toLowerCase() ?? '';
+}
+
+function goodEnoughCombineTwoIngredients(
+  existingIngredients: IIngredient,
+  ingredient: IIngredient
+): IIngredient {
+  const existingQty = Qty(
+    toNumber(existingIngredients.quantity),
+    normalizeUnit(existingIngredients.unit)
+  );
+  const qty = Qty(toNumber(ingredient.quantity), ingredient.unit + '');
+  const outputQtyUnit = Qty(1, existingQty.units()).gt(Qty(1, qty.units()))
+    ? existingQty.units()
+    : qty.units();
+  const combinedIng = qty.add(existingQty).to(outputQtyUnit);
+  const quantity = combinedIng.scalar + '';
+  const unit = combinedIng.units();
+  return Object.assign({}, existingIngredients, {
+    quantity,
+    unit,
+    maxQty: null,
+    minQty: null,
+  });
+}
+
+/*
+ * Goal is to try our best to reduce list of ingredients by there name.
+ * unless the same ingredient is measured by different unit kind
+ */
+function goodEnoughCombine(ingredientArray: IIngredient[]) {
+  const combinedIngredients = ingredientArray.reduce((acc, ingredient) => {
+    const quantity = toNumber(ingredient.quantity);
+    const ingQty = Qty(quantity, normalizeUnit(ingredient.unit));
+    const key = `${ingredient.ingredient}-${ingQty.kind()}`; // when combining different units, remove this from the key and just use the name
+    const existingIngredient = acc[key];
+
+    if (existingIngredient) {
+      return Object.assign(acc, {
+        [key]: goodEnoughCombineTwoIngredients(existingIngredient, ingredient),
+      });
+    } else {
+      return Object.assign(acc, {
+        [key]: {
+          ...ingredient,
+          minQty: null,
+          maxQty: null,
+        },
+      });
+    }
+  }, {} as { [key: string]: IIngredient });
+
+  return Object.keys(combinedIngredients)
+    .reduce((acc, key) => {
+      const ingredient = combinedIngredients[key];
+      return acc.concat(ingredient);
+    }, [] as IIngredient[])
+    .sort(compareIngredients);
 }
 
 function prettyPrintingPress(ingredient: IIngredient): string {
@@ -243,4 +261,4 @@ function compareIngredients(a: IIngredient, b: IIngredient) {
   return a.ingredient < b.ingredient ? -1 : 1;
 }
 
-export { prettyPrintingPress, normalizedCombine, IIngredient, parse, combine };
+export { prettyPrintingPress, goodEnoughCombine, IIngredient, parse, combine };

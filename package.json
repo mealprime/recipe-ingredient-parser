@@ -11,7 +11,7 @@
     "lint": "tslint \"{./**/*.ts,./**/*.tsx}\" --exclude \"{./node_modules/**,./**/*.d.ts}\"",
     "prepublish": "npm run build",
     "test": "npm run build:test && cross-env NODE_ENV=test mocha testDist/test/**/*.js",
-    "test:watch": "nodemon --ignore lib --ignore testDist -e ts,tsx -x 'npm run test --silent || true'",
+    "test:watch": "nodemon --ignore lib --ignore testDist -e ts,tsx -x \"npm run test --silent || true\"",
     "test:ci": "npm run lint && npm test",
     "watch": "nodemon --watch src -e ts,tsx -x 'npm run build'"
   },
