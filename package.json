@@ -1,6 +1,6 @@
 {
   "name": "@mealprime/recipe-ingredient-parser",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Natural language parser for recipes and ingredient lists, incl. combining ingredients",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

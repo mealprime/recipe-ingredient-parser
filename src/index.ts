@@ -131,19 +131,23 @@ function goodEnoughCombineTwoIngredients(
     toNumber(existingIngredients.quantity),
     normalizeUnit(existingIngredients.unit)
   );
-  const qty = Qty(toNumber(ingredient.quantity), ingredient.unit + '');
-  const outputQtyUnit = Qty(1, existingQty.units()).gt(Qty(1, qty.units()))
-    ? existingQty.units()
-    : qty.units();
-  const combinedIng = qty.add(existingQty).to(outputQtyUnit);
-  const quantity = combinedIng.scalar + '';
-  const unit = combinedIng.units();
-  return Object.assign({}, existingIngredients, {
-    quantity,
-    unit,
-    maxQty: null,
-    minQty: null,
-  });
+  try {
+    const qty = Qty(toNumber(ingredient.quantity), normalizeUnit(ingredient.unit));
+    const outputQtyUnit = Qty(1, existingQty.units()).gt(Qty(1, qty.units()))
+      ? existingQty.units()
+      : qty.units();
+    const combinedIng = qty.add(existingQty).to(outputQtyUnit);
+    const quantity = combinedIng.scalar + '';
+    const unit = combinedIng.units();
+    return Object.assign({}, existingIngredients, {
+      quantity,
+      unit,
+      maxQty: null,
+      minQty: null,
+    });
+  } catch (e) {
+    return Object.assign({}, existingIngredients);
+  }
 }
 
 /*
@@ -158,7 +162,7 @@ function goodEnoughCombine(ingredientArray: IIngredient[]) {
       ingQty = Qty(quantity, normalizeUnit(ingredient.unit));
     } catch (e) {
       e.message = `${e.message}. Error while creating qty ${JSON.stringify(ingredient)}`;
-      return;
+      return acc;
     }
     
     const key = `${ingredient.ingredient}-${ingQty.kind()}`; // when combining different units, remove this from the key and just use the name
