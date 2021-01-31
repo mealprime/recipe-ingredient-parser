@@ -158,7 +158,7 @@ function goodEnoughCombine(ingredientArray: IIngredient[]) {
       ingQty = Qty(quantity, normalizeUnit(ingredient.unit));
     } catch (e) {
       e.message = `${e.message}. Error while creating qty ${JSON.stringify(ingredient)}`;
-      throw e;
+      return;
     }
     
     const key = `${ingredient.ingredient}-${ingQty.kind()}`; // when combining different units, remove this from the key and just use the name
