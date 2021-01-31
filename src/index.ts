@@ -153,7 +153,14 @@ function goodEnoughCombineTwoIngredients(
 function goodEnoughCombine(ingredientArray: IIngredient[]) {
   const combinedIngredients = ingredientArray.reduce((acc, ingredient) => {
     const quantity = toNumber(ingredient.quantity);
-    const ingQty = Qty(quantity, normalizeUnit(ingredient.unit));
+    let ingQty;
+    try {
+      ingQty = Qty(quantity, normalizeUnit(ingredient.unit));
+    } catch (e) {
+      e.message = `${e.message}. Error while creating qty ${JSON.stringify(ingredient)}`;
+      throw e;
+    }
+    
     const key = `${ingredient.ingredient}-${ingQty.kind()}`; // when combining different units, remove this from the key and just use the name
     const existingIngredient = acc[key];
 
