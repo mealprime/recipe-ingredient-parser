@@ -1,11 +1,7 @@
 import * as convertIngredientMeasurement from './convertIngredientMeasurement';
 import { units, pluralUnits } from './units';
-import { repeatingFractions } from './repeatingFractions';
-import * as Natural from 'natural';
 import * as math from 'mathjs';
 import * as Qty from 'js-quantities';
-
-const nounInflector = new Natural.NounInflector();
 
 interface IIngredient {
   ingredient: string;
@@ -48,7 +44,7 @@ function parse(recipeString: string) {
 
   quantity = convertIngredientMeasurement.convertFromFraction(quantity);
 
-  /* extraInfo will be any info in parantheses. We'll place it at the end of the ingredient.
+  /* extraInfo will be any info in parentheses. We'll place it at the end of the ingredient.
   For example: "sugar (or other sweetener)" --> extraInfo: "(or other sweetener)" */
   let extraInfo;
   if (
@@ -164,7 +160,7 @@ function goodEnoughCombine(ingredientArray: IIngredient[]) {
       e.message = `${e.message}. Error while creating qty ${JSON.stringify(ingredient)}`;
       return acc;
     }
-    
+
     const key = `${ingredient.ingredient}-${ingQty.kind()}`; // when combining different units, remove this from the key and just use the name
     const existingIngredient = acc[key];
 
@@ -189,54 +185,6 @@ function goodEnoughCombine(ingredientArray: IIngredient[]) {
       return acc.concat(ingredient);
     }, [] as IIngredient[])
     .sort(compareIngredients);
-}
-
-function prettyPrintingPress(ingredient: IIngredient): string {
-  let quantity = '';
-  let unit = ingredient.unit;
-  if (ingredient.quantity) {
-    const [whole, remainder] = ingredient.quantity.split('.');
-    if (+whole !== 0 && typeof whole !== 'undefined') {
-      quantity = whole;
-    }
-    if (+remainder !== 0 && typeof remainder !== 'undefined') {
-      let fractional;
-      if (repeatingFractions[remainder]) {
-        fractional = repeatingFractions[remainder];
-      } else {
-        const fraction = '0.' + remainder;
-        const len = fraction.length - 2;
-        let denominator = Math.pow(10, len);
-        let numerator = +fraction * denominator;
-
-        const divisor = gcd(numerator, denominator);
-
-        numerator /= divisor;
-        denominator /= divisor;
-        fractional = Math.floor(numerator) + '/' + Math.floor(denominator);
-      }
-
-      quantity += quantity ? ' ' + fractional : fractional;
-    }
-    if (
-      ((+whole !== 0 && typeof remainder !== 'undefined') || +whole > 1) &&
-      unit
-    ) {
-      unit = nounInflector.pluralize(unit);
-    }
-  } else {
-    return ingredient.ingredient;
-  }
-
-  return `${quantity}${unit ? ' ' + unit : ''} ${ingredient.ingredient}`;
-}
-
-function gcd(a: number, b: number): number {
-  if (b < 0.0000001) {
-    return a;
-  }
-
-  return gcd(b, Math.floor(a % b));
 }
 
 // TODO: Maybe change this to existingIngredients: IIngredient | IIngredient[]
@@ -272,4 +220,4 @@ function compareIngredients(a: IIngredient, b: IIngredient) {
   return a.ingredient < b.ingredient ? -1 : 1;
 }
 
-export { prettyPrintingPress, goodEnoughCombine, IIngredient, parse, combine };
+export { goodEnoughCombine, IIngredient, parse, combine };
