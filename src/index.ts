@@ -1,5 +1,5 @@
 import * as convertIngredientMeasurement from './convertIngredientMeasurement';
-import { units, pluralUnits } from './units';
+import { pluralUnits, units } from './units';
 import * as math from 'mathjs';
 import * as Qty from 'js-quantities';
 
@@ -111,20 +111,18 @@ function scale(
   actualServing: number
 ): IIngredient[] {
   const ratio = math.floor(actualServing) / serving;
-  const updatedIngredients = ingredients
+  return ingredients
     .map(item => {
-      const updatedIngredient = Object.assign({}, item, {
+      return Object.assign({}, item, {
         ingredient: item.ingredient,
-        quantity: Qty(toNumber(item.quantity) * ratio).scalar + '',
+        quantity: item.quantity
+          ? Qty(toNumber(item.quantity) * ratio).scalar + ''
+          : item.quantity,
         unit: item.unit,
         minQty: item.minQty,
         maxQty: item.maxQty
       });
-
-      return updatedIngredient;
     });
-
-  return updatedIngredients;
 }
 
 function toNumber(str: string | null): number {
