@@ -105,6 +105,28 @@ function combine(ingredientArray: IIngredient[]) {
     .sort(compareIngredients);
 }
 
+function scale(
+  ingredients: IIngredient[],
+  serving: number,
+  actualServing: number
+): IIngredient[] {
+  const ratio = math.floor(actualServing) / serving;
+  const updatedIngredients = ingredients
+    .map(item => {
+      const updatedIngredient = Object.assign({}, item, {
+        ingredient: item.ingredient,
+        quantity: Qty(toNumber(item.quantity) * ratio, normalizeUnit(item.unit)).scalar,
+        unit: item.unit,
+        minQty: item.minQty,
+        maxQty: item.maxQty
+      });
+
+      return updatedIngredient;
+    });
+
+  return updatedIngredients;
+}
+
 function toNumber(str: string | null): number {
   str = str ?? '0';
   // Take care of this case '1-2' 1 to 2 quantity. just use the first qty for now
@@ -220,4 +242,4 @@ function compareIngredients(a: IIngredient, b: IIngredient) {
   return a.ingredient < b.ingredient ? -1 : 1;
 }
 
-export { goodEnoughCombine, IIngredient, parse, combine };
+export { goodEnoughCombine, IIngredient, parse, combine, scale };
