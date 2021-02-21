@@ -69,5 +69,11 @@ Clone the repo and `yarn` to install packages. If `yarn test` comes back good af
 ## Natural Language Parsing	
 This project uses Natural, for more information, see https://dzone.com/articles/using-natural-nlp-module	
 	
-### Publishing	
-Checkout https://docs.npmjs.com/getting-started/publishing-npm-packages for more info
+### Dev note
+- To publish the package
+
+
+```
+npm login
+npm run publish:package
+```
