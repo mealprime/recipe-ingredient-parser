@@ -686,7 +686,7 @@ describe('combine ingredients', () => {
       {
         ingredient: 'tortilla',
         quantity: '10',
-        unit: null,
+        unit: 'lb',
         minQty: '10',
         maxQty: '10',
       }
@@ -695,9 +695,51 @@ describe('combine ingredients', () => {
       {
         ingredient: 'tortilla',
         quantity: '20',
-        unit: null,
+        unit: 'lb',
         minQty: '10',
         maxQty: '10',
+      }
+    ]);
+  });
+
+  it('scale down the ingredients', () => {
+    const ingredientArray = [
+      {
+        ingredient: 'tortilla',
+        quantity: '10',
+        unit: 'lb',
+        minQty: '10',
+        maxQty: '10',
+      }
+    ];
+    expect(scale(ingredientArray, 2, 1)).to.deep.equal([
+      {
+        ingredient: 'tortilla',
+        quantity: '5',
+        unit: 'lb',
+        minQty: '10',
+        maxQty: '10',
+      }
+    ]);
+  });
+
+  it('null-safe when scaling', () => {
+    const ingredientArray = [
+      {
+        ingredient: 'tortilla',
+        quantity: null,
+        unit: null,
+        minQty: null,
+        maxQty: null,
+      }
+    ];
+    expect(scale(ingredientArray, 1, 2)).to.deep.equal([
+      {
+        ingredient: 'tortilla',
+        quantity: null,
+        unit: null,
+        minQty: null,
+        maxQty: null,
       }
     ]);
   });
