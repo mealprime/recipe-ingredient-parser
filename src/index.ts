@@ -115,7 +115,7 @@ function scale(
     .map(item => {
       const updatedIngredient = Object.assign({}, item, {
         ingredient: item.ingredient,
-        quantity: Qty(toNumber(item.quantity) * ratio, normalizeUnit(item.unit)).scalar,
+        quantity: Qty(toNumber(item.quantity) * ratio, normalizeUnit(item.unit)).scalar + '',
         unit: item.unit,
         minQty: item.minQty,
         maxQty: item.maxQty

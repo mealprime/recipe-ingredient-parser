@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { parse, combine } from '../src/index';
+import { parse, combine, scale } from '../src/index';
 
 describe('recipe parser', () => {
   it('returns an object', () => {
@@ -677,6 +677,27 @@ describe('combine ingredients', () => {
         unit: null,
         minQty: null,
         maxQty: null,
+      }
+    ]);
+  });
+
+  it('scale up the ingredients', () => {
+    const ingredientArray = [
+      {
+        ingredient: 'tortilla',
+        quantity: '10',
+        unit: null,
+        minQty: '10',
+        maxQty: '10',
+      }
+    ];
+    expect(scale(ingredientArray, 1, 2)).to.deep.equal([
+      {
+        ingredient: 'tortilla',
+        quantity: '20',
+        unit: null,
+        minQty: '10',
+        maxQty: '10',
       }
     ]);
   });
